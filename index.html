@@ -4,22 +4,59 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Todos by Iris</title>
-    <script>
+    <script defer>
+        apiServer='http://44.201.170.46:80'
+        function createItem(text){
+            var li = document.createElement("li");
+            li.innerHTML = `<span>${text}</span>`+' <button onclick="doRemove(this)">Remove</button>'+`<input value="${text}"><button onclick="doUpdate(this)">Update</button>`;
+            return li;
+        }
         function doRemove(element) {
-            element.parentElement.remove();
+            var todo = element.parentElement.querySelector("input").value;
+            if (todo) {
+                fetch(apiServer+'/delete?text='+todo)
+                .then(data => {
+                    doRefresh();
+                });
+            }
         }
         function doAdd() {
             var todo = document.getElementById("text").value;
             if (todo) {
-                var li = document.createElement("li");
-                li.innerHTML = `<input value="${todo}"><button onclick="doSave(this)">Update</button>`+' <button onclick="doRemove(this)">Remove</button>';
-                document.getElementById("todos").appendChild(li);
+                fetch(apiServer+'/add?text='+todo)
+                .then(data => {
+                    doRefresh();
+                });
             }
         }
+        function doUpdate(element) {
+            var oldText=element.parentElement.querySelector("span").innerText;
+            var newText = element.parentElement.querySelector("input").value;
+            if (newText) {
+                fetch(apiServer+'/update?oldText='+oldText+'&newText='+newText)
+                .then(data => {
+                    doRefresh();
+                });
+            }
+        }
+        function doRefresh(){
+            fetch(apiServer+'/list')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("todos").innerHTML = "";
+                if (!data) return;
+                data.forEach(todo => {
+                    let li = createItem(todo);
+                    document.getElementById("todos").appendChild(li);
+                });
+            });
+        }
+        doRefresh();
     </script>
 </head>
 <body>
     <h1>Todos</h1>
+    <button onclick="doRefresh()">Refresh</button>
     <ol id="todos">
 
     </ol>
