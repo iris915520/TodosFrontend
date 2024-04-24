@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todos by Iris</title>
+    <script>
+        function doRemove(element) {
+            element.parentElement.remove();
+        }
+        function doAdd() {
+            var todo = document.getElementById("text").value;
+            if (todo) {
+                var li = document.createElement("li");
+                li.innerHTML = `<input value="${todo}"><button onclick="doSave(this)">Update</button>`+' <button onclick="doRemove(this)">Remove</button>';
+                document.getElementById("todos").appendChild(li);
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>Todos</h1>
+    <ol id="todos">
+
+    </ol>
+    <div>
+        <input type="text" name="text" id="text">
+        <button onclick="doAdd()">Add</button>
+    </div>
+</body>
+</html>
